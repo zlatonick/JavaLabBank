@@ -1,7 +1,7 @@
 package model;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 
 public class Bill {
 
@@ -18,6 +18,10 @@ public class Bill {
         this.userId = userId;
         this.amount = amount;
         this.payUntil = payUntil;
+    }
+
+    public void setBillId(int billId) {
+        this.billId = billId;
     }
 
     public int getBillId() {

@@ -1,80 +1,83 @@
 package dao.instances;
 
-import model.Bill;
+import model.AccountRequest;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-public class BillDao extends AbstractDao<Bill> {
+public class AccountRequestsDao extends AbstractDao<AccountRequest> {
 
-    public BillDao(Connection connection) {
+    public AccountRequestsDao(Connection connection) {
         super(connection);
     }
 
     @Override
-    public Bill findById(int id) {
+    public AccountRequest findById(int id) {
 
-        Bill bill;
+        AccountRequest accountRequest;
 
         try  (
                 Statement statement = this.connection.createStatement()
         )
         {
             ResultSet res = statement.executeQuery(
-                    "SELECT * FROM Bills WHERE Bill_id = " + id);
+                    "SELECT * FROM Account_requests WHERE Request_id = " + id);
 
             if (!res.next()) {
                 return null;
             }
 
-            bill = new Bill(id, res.getInt("User_id"),
-                    res.getBigDecimal("Amount"), res.getDate("Pay_until"));
+            accountRequest = new AccountRequest(id, res.getInt("User_id"),
+                    res.getBigDecimal("Amount"), res.getBigDecimal("Credit_rate"),
+                    res.getDate("Term"));
         }
         catch (SQLException e) {
             return null;
         }
 
-        return bill;
+        return accountRequest;
     }
 
     @Override
-    public ArrayList<Bill> findAll() {
+    public ArrayList<AccountRequest> findAll() {
 
-        ArrayList<Bill> bills = new ArrayList<>();
+        ArrayList<AccountRequest> accountRequests = new ArrayList<>();
 
         try (
                 Statement statement = this.connection.createStatement()
         )
         {
             ResultSet res = statement.executeQuery(
-                    "SELECT * FROM Bills");
+                    "SELECT * FROM Account_requests");
 
             while (res.next()) {
-                bills.add(new Bill(res.getInt("Bill_id"), res.getInt("User_id"),
-                        res.getBigDecimal("Amount"), res.getDate("Pay_until")));
+                accountRequests.add(new AccountRequest(res.getInt("Request_id"),
+                        res.getInt("User_id"), res.getBigDecimal("Amount"),
+                        res.getBigDecimal("Credit_rate"), res.getDate("Term")));
             }
         }
         catch (SQLException e) {
             return null;
         }
 
-        return bills;
+        return accountRequests;
     }
 
     @Override
-    public int insert(Bill entity) {
+    public int insert(AccountRequest entity) {
 
         int result;
 
         try (
                 PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO Bills (User_id, Amount, Pay_until) " +
-                                "VALUES (?, ?, ?)",
+                        "INSERT INTO Account_requests (User_id, Amount, Credit_rate, Term) " +
+                                "VALUES (?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS)
         ) {
             statement.setInt(1, entity.getUserId());
             statement.setBigDecimal(2, entity.getAmount());
-            statement.setDate(3, entity.getPayUntil());
+            statement.setBigDecimal(3, entity.getCreditRate());
+            statement.setDate(4, entity.getTerm());
 
             int affectedRows = statement.executeUpdate();
 
@@ -85,7 +88,7 @@ public class BillDao extends AbstractDao<Bill> {
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     result = generatedKeys.getInt(1);
-                    entity.setBillId(result);
+                    entity.setRequestId(result);
                 }
                 else {
                     return -1;
@@ -100,17 +103,18 @@ public class BillDao extends AbstractDao<Bill> {
     }
 
     @Override
-    public boolean update(Bill entity) {
+    public boolean update(AccountRequest entity) {
 
         try (
                 PreparedStatement statement = connection.prepareStatement(
-                        "UPDATE Bills SET User_id = ?, Amount = ?, Pay_until = ? " +
-                                "WHERE Bill_id = ?")
+                        "UPDATE Account_requests SET User_id = ?, Amount = ?, Credit_rate = ?, " +
+                                "Term = ? WHERE Request_id = ?")
         ) {
             statement.setInt(1, entity.getUserId());
             statement.setBigDecimal(2, entity.getAmount());
-            statement.setDate(3, entity.getPayUntil());
-            statement.setInt(4, entity.getBillId());
+            statement.setBigDecimal(3, entity.getCreditRate());
+            statement.setDate(4, entity.getTerm());
+            statement.setInt(5, entity.getRequestId());
 
             int affectedRows = statement.executeUpdate();
 
@@ -126,14 +130,14 @@ public class BillDao extends AbstractDao<Bill> {
     }
 
     @Override
-    public boolean delete(Bill entity) {
+    public boolean delete(AccountRequest entity) {
 
         try (
                 PreparedStatement statement = connection.prepareStatement(
-                        "DELETE FROM Bills WHERE Bill_id = ?")
+                        "DELETE FROM Account_requests WHERE Request_id = ?")
         ) {
 
-            statement.setInt(1, entity.getBillId());
+            statement.setInt(1, entity.getRequestId());
 
             int affectedRows = statement.executeUpdate();
 

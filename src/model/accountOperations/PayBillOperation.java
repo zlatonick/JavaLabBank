@@ -1,14 +1,15 @@
 package model.accountOperations;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 
 public class PayBillOperation extends AccountOperation {
 
     private int billId;
 
-    public PayBillOperation(int accountId, BigDecimal amount, Date date, int billId) {
-        super(accountId, amount, date);
+    public PayBillOperation(int operationId, int accountId, OperationType type,
+                            BigDecimal amount, Date date, int billId) {
+        super(operationId, accountId, type, amount, date);
         this.billId = billId;
     }
 

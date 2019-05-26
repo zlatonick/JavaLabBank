@@ -4,7 +4,7 @@ import model.accountOperations.AccountOperation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 
 public abstract class Account {
 

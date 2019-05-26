@@ -10,7 +10,12 @@ public class ConnectionPool {
     private static ConnectionPool instance;
 
     private ConnectionPool() {
-
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println("Error while registering the MySql driver");
+        }
     }
 
     private static ConnectionPool getInstance() {

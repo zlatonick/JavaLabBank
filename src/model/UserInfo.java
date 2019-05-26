@@ -59,7 +59,7 @@ public class UserInfo {
     }
 
     public UserInfo(int userId, String login, String password, String firstName,
-                    String lastName, String email, String phone) {
+                    String lastName, String email, String phone, boolean isManager) {
         this.userId = userId;
         this.login = login;
         this.password = password;
@@ -67,5 +67,6 @@ public class UserInfo {
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
+        this.isManager = isManager;
     }
 }
